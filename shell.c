@@ -60,11 +60,24 @@ int main(void)
                     perror("Failed to execute the program");
                     exit(EXIT_FAILURE); /* Indicate the command could not be executed*/
                 }
-                
+        
             }
-         }
+            else
+            {
+                 /* We are in the parent process*/
 
-            return(0);
+                int status;
+                waitpid(pid, &status, 0);/* We will wait for the child*/
+
+                if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
+                {
+                    printf("Child process %d exited with non-zero status %d\n,", pid, WEXITSTATUS(status));
+                }
+            }
+
+            token = strtok(NULL, delimiters);
+         }
+         return(0);
     }
 
 }
