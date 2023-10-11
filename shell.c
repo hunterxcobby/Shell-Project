@@ -9,9 +9,16 @@ int main(void)
 
 	/* Sring tokenization*/
 	char *delimiters = " "; /* Set an empty string as a delimiter*/
-	char *token;
+	char *tokens;
+    char *line_argument[1024];
 
-	printf("shell$ ");
+	/* For the fork*/
+	/*pid_t pid;*/
+
+	/*while (1) Start an infinite loop*/ 
+	/* Prompt*/
+	write(1, "Shell$ ", 7);
+
 	/* Getting users input*/
 	characters_read = getline(&line, &len, stdin);
 
@@ -20,77 +27,96 @@ int main(void)
 		perror("Error reading input");
 		return(-1);
 	}
-	else
+	/*else if (characters_read == 1)
+	  {
+	  continue;
+	  }*/
+	else 
 	{
+        int idx = 0;
+		/*pid_t pid;*/
 		/* Process the input using string tokenization*/
-		token = strtok(line, delimiters);
-		while(token != NULL)
+		tokens = strtok(line, delimiters);
+		printf("This is the token=====>>>%s\n", tokens);
+        
+        while(tokens != NULL)
+        {
+            line_argument[idx] = tokens;
+            tokens = strtok(NULL, delimiters);
+            idx++;
+        }
+        line_argument[idx] = NULL;
+
+        idx = 0;
+		while (line_argument[idx] != NULL)
 		{
-			/**
-			 * Here we can check if the token is a built-in command like (i.e, cd, exit)
-			 * And handle it separately  
-			 */
-
-			/* If it is not a built in command, we execute it*/
-			pid_t pid = fork();
-
-			if (pid == -1) /* Changed from 1 to -1*/
+			pid_t pid;
+			char *cmdPath = get_path(line_argument[idx]);
+			printf("line =====>>>%s\n", line);
+			printf("This is the token=====>>>%s\n", tokens);
+			printf("command path is %s\n", cmdPath);
+			if (cmdPath != NULL) 
 			{
-				perror("Fork failed");
-				free(line);
-				return(-1);
-			}
-			else if (pid == 0)
-			{
-				/* This is the child process*/
-				char *cmdPath = get_path(token);
-				char **args = malloc(2 * sizeof(char *));/* Do not forget to free args*/
-				if (args == NULL)
+				printf("Executing command: %s\n", cmdPath);
+				/**
+				 * Here we can check if the token is a built-in command like (i.e, cd, exit)
+				 * And handle it separately  
+				 */
+
+				/* If it is not a built in command, we execute it*/
+				pid = fork();
+
+				if (pid == -1) /* Changed from 1 to -1*/
 				{
-					perror("Memory allocation failed");
+					perror("Fork failed");
 					free(line);
-					exit(EXIT_FAILURE);
+					return(-1);
 				}
-
-				args[0] = token;
-				args[1] = NULL;
-
-				printf("command path is %s", cmdPath);
-
-				if (cmdPath == NULL)
+				else if (pid == 0)
 				{
-					perror("Command not found");
-                    free(args); /* Free allocated memory */
-                    free(line); /* Free allocated memory */
-                    exit(EXIT_FAILURE);
+
+					/* This is the child process*/
+					char **args = malloc(2 * sizeof(char *));/* Do not forget to free args*/
+					if (args == NULL)
+					{
+						perror("Memory allocation failed");
+						free(line);
+						exit(EXIT_FAILURE);
+					}
+
+					args[0] = cmdPath;
+					args[1] = NULL;
+
+					/* We execute the command with execve*/
+					execve(args[0], args, environ);
+
+					/* Check if evecve fails*/
+					perror("Execve failed");
+					free(args); /* Free allocated memory */
+					free(line); /* Free allocated memory */
+					exit(1);
 				}
 
-				/* We execute the command with execve*/
-				execve(cmdPath, args, environ);
-
-				/* Check if evecve fails*/
-				perror("Execve failed");
-                free(args); /* Free allocated memory */
-                free(line); /* Free allocated memory */
-                exit(EXIT_FAILURE);
 			}
 			else
 			{
 				/* This is the parent process*/
-
+            
 				int status;
-				waitpid(pid, &status, 0);/* We will wait for the child to finish*/
+				waitpid(1, &status, 0);/* We will wait for the child to finish*/
 
 				if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
 				{
-					printf("\nChild process %d exited with non-zero status %d\n", pid, WEXITSTATUS(status));
+					printf("\nChild process %d exited with non-zero status %d\n", 1, WEXITSTATUS(status));
 				}
 			}
 
-			token = strtok(NULL, delimiters);
+			idx++;
 
 		}
 		free(line); /* Free allocated memory */
-		return(0);
 	}
+	return(0);
 }
+
+
