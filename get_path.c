@@ -33,7 +33,7 @@ char *get_path(char *command) /* It takes the tokenized string as argument and c
         /*printf("Checking path: %s\n", full_path);*/
 
         /* Concatenate the path with the command*/
-        strcat(command_path, "ls");
+        strcat(command_path, command);
         
         /*printf("This is the command path%s\n", command_path);*/
         /* Check if the file exists */
