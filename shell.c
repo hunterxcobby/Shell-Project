@@ -53,7 +53,7 @@ int main(void)
 			pid_t pid;
 			char *cmdPath = get_path(line_argument[idx]);
 			printf("line =====>>>%s\n", line);
-			printf("This is the token=====>>>%s\n", tokens);
+			printf("This is the token now=====>>>%s\n", tokens);
 			printf("command path is %s\n", cmdPath);
 			if (cmdPath != NULL) 
 			{
