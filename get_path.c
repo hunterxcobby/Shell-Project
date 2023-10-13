@@ -29,20 +29,16 @@ char *get_path(char *command) /* It takes the tokenized string as argument and c
         sprintf(full_path, "%s/%s", dir, command);*/
         /*printf("Constructed full_path: %s\n", full_path);*/
 
-        /* To see what is in full_path*/
-        /*printf("Checking path: %s\n", full_path);*/
-
         /* Concatenate the path with the command*/
-        strcat(command_path, "ls");
+        strcat(command_path,command);
         
         /*printf("This is the command path%s\n", command_path);*/
         /* Check if the file exists */
-        if (access(command_path, F_OK) == 0)
+        if (access(command_path, X_OK) == 0)
         {
-            /*printf("File found======>\n");*/
             free(path_copy); /* Free path_copy since it's not used anymore */
 
-            
+            printf("This command path in the function%s\n", command_path);
             return (strdup(command_path)); /* Return the full path */
         }
 
