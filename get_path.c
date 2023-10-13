@@ -37,8 +37,7 @@ char *get_path(char *command) /* It takes the tokenized string as argument and c
         dir = strtok(NULL, ":"); /* Proceed to the next directory*/
     }
 
-    printf("File is not found in any directory\n");
     free(path_copy);
     /* if no executable is found, it returns NULL*/
-    return NULL;
+    return (command);
 }
