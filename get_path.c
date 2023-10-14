@@ -1,8 +1,9 @@
 #include "main.h"
 
 /**
- * This basically contains
- * the path to search
+ * This contains codes
+ * for searching through
+ * the path 
  */
 
 char *get_path(char *command) /* It takes the tokenized string as argument and calls it a command*/
