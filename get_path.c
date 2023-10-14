@@ -27,7 +27,7 @@ char *get_path(char *command) /* It takes the tokenized string as argument and c
         /* Concatenate the path with the command*/
         strcat(command_path,command);
         
-        /* Check if the file exists */
+        /* Check if the file exists and is executable */
         if (access(command_path, F_OK) == 0 && access(command_path, X_OK) == 0)
         {
             free(path_copy); /* Free path_copy since it's not used anymore */
